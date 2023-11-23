@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.demo.dao.ChukuMapper">
+
+    <resultMap id="BaseResultMap" type="com.demo.vo.Chuku" >
+            <result column="id" property="id" />
+            <result column="chuku_huohao" property="chukuHuohao" />
+            <result column="chuku_name" property="chukuName" />
+            <result column="chuku_suliang" property="chukuSuliang" />
+            <result column="chuku_clientname" property="chukuClientname" />
+            <result column="chuku_tel" property="chukuTel" />
+            <result column="chuku_man" property="chukuMan" />
+            <result column="chuku_text" property="chukuText" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        `id`,`chuku_huohao`,`chuku_name`,`chuku_suliang`,`chuku_clientname`,`chuku_tel`,`chuku_man`,`chuku_text`
+    </sql>
+
+    <!--新增-->
+    <insert id="doCreate" useGeneratedKeys="true" keyColumn="id" keyProperty="id" parameterType="com.demo.vo.Chuku">
+        INSERT INTO `t_chuku`
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                    <if test ='id != null'>`id`,</if>
+                    <if test ='chukuHuohao != null'>`chuku_huohao`,</if>
+                    <if test ='chukuName != null'>`chuku_name`,</if>
+                    <if test ='chukuSuliang != null'>`chuku_suliang`,</if>
+                    <if test ='chukuClientname != null'>`chuku_clientname`,</if>
+                    <if test ='chukuTel != null'>`chuku_tel`,</if>
+                    <if test ='chukuMan != null'>`chuku_man`,</if>
+                    <if test ='chukuText != null'>`chuku_text`</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                    <if test ='id != null'>#{id},</if>
+                    <if test ='chukuHuohao != null'>#{chukuHuohao},</if>
+                    <if test ='chukuName != null'>#{chukuName},</if>
+                    <if test ='chukuSuliang != null'>#{chukuSuliang},</if>
+                    <if test ='chukuClientname != null'>#{chukuClientname},</if>
+                    <if test ='chukuTel != null'>#{chukuTel},</if>
+                    <if test ='chukuMan != null'>#{chukuMan},</if>
+                    <if test ='chukuText != null'>#{chukuText}</if>
+        </trim>
+    </insert>
+
+    <!--批量删除-->
+    <delete id="doRemoveBatch" parameterType="java.util.Collection">
+        DELETE FROM `t_chuku` WHERE `id` IN
+        <foreach collection="list" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!--修改-->
+    <update id="doUpdate" parameterType="com.demo.vo.Chuku">
+        UPDATE `t_chuku`
+        <set>
+                <if test ='id != null'>`id` = #{id},</if>
+                <if test ='chukuHuohao != null'>`chuku_huohao` = #{chukuHuohao},</if>
+                <if test ='chukuName != null'>`chuku_name` = #{chukuName},</if>
+                <if test ='chukuSuliang != null'>`chuku_suliang` = #{chukuSuliang},</if>
+                <if test ='chukuClientname != null'>`chuku_clientname` = #{chukuClientname},</if>
+                <if test ='chukuTel != null'>`chuku_tel` = #{chukuTel},</if>
+                <if test ='chukuMan != null'>`chuku_man` = #{chukuMan},</if>
+                <if test ='chukuText != null'>`chuku_text` = #{chukuText}</if>
+        </set>
+        WHERE `id` = #{id}
+    </update>
+
+    <!--获取-->
+    <select id="findById" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" /> FROM `t_chuku` WHERE `id` = #{id}
+    </select>
+
+    <!--列表-->
+    <select id="findAllSplit" parameterType="java.util.Map" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" /> FROM `t_chuku`
+        <where>
+            <if test="searchColumn != null and searchColumn != '' and keyword != null and keyword != ''">
+                ${searchColumn} LIKE CONCAT('%',#{keyword},'%')  AND
+            </if>
+            1=1
+        </where>
+        ORDER BY id ASC
+        <if test="startIndex != null and pageSize != null">
+            LIMIT #{startIndex},#{pageSize};
+        </if>
+    </select>
+    <!--数量-->
+    <select id="getAllCount" parameterType="java.util.Map" resultType="Integer">
+        SELECT COUNT(*) FROM `t_chuku`
+        <where>
+            <if test="searchColumn != null and searchColumn != '' and keyword != null and keyword != ''">
+                ${searchColumn} LIKE CONCAT('%',#{keyword},'%')  AND
+            </if>
+            1=1
+        </where>
+    </select>
+</mapper>

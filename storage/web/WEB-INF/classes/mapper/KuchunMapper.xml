@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.demo.dao.KuchunMapper">
+
+    <resultMap id="BaseResultMap" type="com.demo.vo.Kuchun" >
+            <result column="id" property="id" />
+            <result column="kuchun_no" property="kuchunNo" />
+            <result column="kuchun_name" property="kuchunName" />
+            <result column="kuchun_count" property="kuchunCount" />
+            <result column="kuchun_rukushijian" property="kuchunRukushijian" />
+            <result column="kuchun_ren" property="kuchunRen" />
+            <result column="kuchun_text" property="kuchunText" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        `id`,`kuchun_no`,`kuchun_name`,`kuchun_count`,`kuchun_rukushijian`,`kuchun_ren`,`kuchun_text`
+    </sql>
+
+    <!--新增-->
+    <insert id="doCreate" useGeneratedKeys="true" keyColumn="id" keyProperty="id" parameterType="com.demo.vo.Kuchun">
+        INSERT INTO `t_kuchun`
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                    <if test ='id != null'>`id`,</if>
+                    <if test ='kuchunNo != null'>`kuchun_no`,</if>
+                    <if test ='kuchunName != null'>`kuchun_name`,</if>
+                    <if test ='kuchunCount != null'>`kuchun_count`,</if>
+                    <if test ='kuchunRukushijian != null'>`kuchun_rukushijian`,</if>
+                    <if test ='kuchunRen != null'>`kuchun_ren`,</if>
+                    <if test ='kuchunText != null'>`kuchun_text`</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                    <if test ='id != null'>#{id},</if>
+                    <if test ='kuchunNo != null'>#{kuchunNo},</if>
+                    <if test ='kuchunName != null'>#{kuchunName},</if>
+                    <if test ='kuchunCount != null'>#{kuchunCount},</if>
+                    <if test ='kuchunRukushijian != null'>#{kuchunRukushijian},</if>
+                    <if test ='kuchunRen != null'>#{kuchunRen},</if>
+                    <if test ='kuchunText != null'>#{kuchunText}</if>
+        </trim>
+    </insert>
+
+    <!--批量删除-->
+    <delete id="doRemoveBatch" parameterType="java.util.Collection">
+        DELETE FROM `t_kuchun` WHERE `id` IN
+        <foreach collection="list" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!--修改-->
+    <update id="doUpdate" parameterType="com.demo.vo.Kuchun">
+        UPDATE `t_kuchun`
+        <set>
+                <if test ='id != null'>`id` = #{id},</if>
+                <if test ='kuchunNo != null'>`kuchun_no` = #{kuchunNo},</if>
+                <if test ='kuchunName != null'>`kuchun_name` = #{kuchunName},</if>
+                <if test ='kuchunCount != null'>`kuchun_count` = #{kuchunCount},</if>
+                <if test ='kuchunRukushijian != null'>`kuchun_rukushijian` = #{kuchunRukushijian},</if>
+                <if test ='kuchunRen != null'>`kuchun_ren` = #{kuchunRen},</if>
+                <if test ='kuchunText != null'>`kuchun_text` = #{kuchunText}</if>
+        </set>
+        WHERE `id` = #{id}
+    </update>
+
+    <!--获取-->
+    <select id="findById" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" /> FROM `t_kuchun` WHERE `id` = #{id}
+    </select>
+
+    <!--列表-->
+    <select id="findAllSplit" parameterType="java.util.Map" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" /> FROM `t_kuchun`
+        <where>
+            <if test="searchColumn != null and searchColumn != '' and keyword != null and keyword != ''">
+                ${searchColumn} LIKE CONCAT('%',#{keyword},'%')  AND
+            </if>
+            1=1
+        </where>
+        ORDER BY id ASC
+        <if test="startIndex != null and pageSize != null">
+            LIMIT #{startIndex},#{pageSize};
+        </if>
+    </select>
+    <!--数量-->
+    <select id="getAllCount" parameterType="java.util.Map" resultType="Integer">
+        SELECT COUNT(*) FROM `t_kuchun`
+        <where>
+            <if test="searchColumn != null and searchColumn != '' and keyword != null and keyword != ''">
+                ${searchColumn} LIKE CONCAT('%',#{keyword},'%')  AND
+            </if>
+            1=1
+        </where>
+    </select>
+</mapper>

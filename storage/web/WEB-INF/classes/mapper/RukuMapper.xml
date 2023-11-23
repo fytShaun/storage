@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.demo.dao.RukuMapper">
+
+    <resultMap id="BaseResultMap" type="com.demo.vo.Ruku" >
+            <result column="id" property="id" />
+            <result column="ruku_no" property="rukuNo" />
+            <result column="ruku_dingdanhao" property="rukuDingdanhao" />
+            <result column="ruku_name" property="rukuName" />
+            <result column="ruku_suliang" property="rukuSuliang" />
+            <result column="ruku_time" property="rukuTime" />
+            <result column="ruku_ren" property="rukuRen" />
+            <result column="ruku_text" property="rukuText" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        `id`,`ruku_no`,`ruku_dingdanhao`,`ruku_name`,`ruku_suliang`,`ruku_time`,`ruku_ren`,`ruku_text`
+    </sql>
+
+    <!--新增-->
+    <insert id="doCreate" useGeneratedKeys="true" keyColumn="id" keyProperty="id" parameterType="com.demo.vo.Ruku">
+        INSERT INTO `t_ruku`
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                    <if test ='id != null'>`id`,</if>
+                    <if test ='rukuNo != null'>`ruku_no`,</if>
+                    <if test ='rukuDingdanhao != null'>`ruku_dingdanhao`,</if>
+                    <if test ='rukuName != null'>`ruku_name`,</if>
+                    <if test ='rukuSuliang != null'>`ruku_suliang`,</if>
+                    <if test ='rukuTime != null'>`ruku_time`,</if>
+                    <if test ='rukuRen != null'>`ruku_ren`,</if>
+                    <if test ='rukuText != null'>`ruku_text`</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                    <if test ='id != null'>#{id},</if>
+                    <if test ='rukuNo != null'>#{rukuNo},</if>
+                    <if test ='rukuDingdanhao != null'>#{rukuDingdanhao},</if>
+                    <if test ='rukuName != null'>#{rukuName},</if>
+                    <if test ='rukuSuliang != null'>#{rukuSuliang},</if>
+                    <if test ='rukuTime != null'>#{rukuTime},</if>
+                    <if test ='rukuRen != null'>#{rukuRen},</if>
+                    <if test ='rukuText != null'>#{rukuText}</if>
+        </trim>
+    </insert>
+
+    <!--批量删除-->
+    <delete id="doRemoveBatch" parameterType="java.util.Collection">
+        DELETE FROM `t_ruku` WHERE `id` IN
+        <foreach collection="list" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!--修改-->
+    <update id="doUpdate" parameterType="com.demo.vo.Ruku">
+        UPDATE `t_ruku`
+        <set>
+                <if test ='id != null'>`id` = #{id},</if>
+                <if test ='rukuNo != null'>`ruku_no` = #{rukuNo},</if>
+                <if test ='rukuDingdanhao != null'>`ruku_dingdanhao` = #{rukuDingdanhao},</if>
+                <if test ='rukuName != null'>`ruku_name` = #{rukuName},</if>
+                <if test ='rukuSuliang != null'>`ruku_suliang` = #{rukuSuliang},</if>
+                <if test ='rukuTime != null'>`ruku_time` = #{rukuTime},</if>
+                <if test ='rukuRen != null'>`ruku_ren` = #{rukuRen},</if>
+                <if test ='rukuText != null'>`ruku_text` = #{rukuText}</if>
+        </set>
+        WHERE `id` = #{id}
+    </update>
+
+    <!--获取-->
+    <select id="findById" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" /> FROM `t_ruku` WHERE `id` = #{id}
+    </select>
+
+    <!--列表-->
+    <select id="findAllSplit" parameterType="java.util.Map" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" /> FROM `t_ruku`
+        <where>
+            <if test="searchColumn != null and searchColumn != '' and keyword != null and keyword != ''">
+                ${searchColumn} LIKE CONCAT('%',#{keyword},'%')  AND
+            </if>
+            1=1
+        </where>
+        ORDER BY id ASC
+        <if test="startIndex != null and pageSize != null">
+            LIMIT #{startIndex},#{pageSize};
+        </if>
+    </select>
+    <!--数量-->
+    <select id="getAllCount" parameterType="java.util.Map" resultType="Integer">
+        SELECT COUNT(*) FROM `t_ruku`
+        <where>
+            <if test="searchColumn != null and searchColumn != '' and keyword != null and keyword != ''">
+                ${searchColumn} LIKE CONCAT('%',#{keyword},'%')  AND
+            </if>
+            1=1
+        </where>
+    </select>
+</mapper>
